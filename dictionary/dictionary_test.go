@@ -3,14 +3,28 @@ package main
 import "testing"
 
 func TestSearch(t *testing.T) {
-	dictionary := map[string]string{
+	dictionary := Dictionary{
 		"test": "this is a test",
 	}
-	got := Search(dictionary, "test")
-	// got := dictionary["test"]
-	want := "this is a test"
 
-	assertStrings(t, got, want)
+	t.Run("known word", func(t *testing.T) {
+		// got := dictionary["test"]  // simple key lookup
+		// got := Search(dictionary, "test")  // function key lookup
+		got, _ := dictionary.Search("test") // method key lookup
+		want := "this is a test"
+
+		assertStrings(t, got, want)
+	})
+
+	t.Run("unknown word", func(t *testing.T) {
+		_, err := dictionary.Search("unknown")
+		want := "could not find the word you were looking for"
+
+		if err == nil {
+			t.Fatal("expected to get an error.")
+		}
+		assertStrings(t, err.Error(), want)
+	})
 }
 
 func assertStrings(t testing.TB, got, want string) {
